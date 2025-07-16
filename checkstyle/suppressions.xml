@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD Suppressions 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- Suppress checks for generated code -->
+    <suppress files="[\\/]generated[\\/]" checks=".*"/>
+    <suppress files="[\\/]generated-sources[\\/]" checks=".*"/>
+    
+    <!-- Suppress checks for test files -->
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocType"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocMethod"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="JavadocVariable"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MissingJavadocMethod"/>
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MissingJavadocType"/>
+    
+    <!-- Suppress magic numbers in test files -->
+    <suppress files="[\\/]src[\\/]test[\\/]" checks="MagicNumber"/>
+    
+    <!-- Suppress line length for package-info.java files -->
+    <suppress files="package-info\.java" checks="LineLength"/>
+    
+    <!-- Suppress checks for Spring Boot Application class -->
+    <suppress files="Application\.java$" checks="HideUtilityClassConstructor"/>
+    
+    <!-- Suppress checks for configuration classes -->
+    <suppress files="Config\.java$" checks="MagicNumber"/>
+    <suppress files="Configuration\.java$" checks="MagicNumber"/>
+    
+    <!-- Suppress checks for DTOs and entities -->
+    <suppress files="[\\/]dto[\\/].*\.java$" checks="MagicNumber"/>
+    <suppress files="[\\/]entity[\\/].*\.java$" checks="MagicNumber"/>
+    <suppress files="[\\/]model[\\/].*\.java$" checks="MagicNumber"/>
+    
+    <!-- Suppress parameter number for builders -->
+    <suppress files="Builder\.java$" checks="ParameterNumber"/>
+    
+    <!-- Suppress for Lombok generated code -->
+    <suppress files=".*\.java" checks="HiddenField">
+        <property name="ignoreConstructorParameter" value="true"/>
+        <property name="ignoreSetter" value="true"/>
+    </suppress>
+</suppressions>

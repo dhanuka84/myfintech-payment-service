@@ -1,0 +1,525 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+paths:
+  /api/v1/payments/{id}:
+    get:
+      tags:
+      - payment-controller
+      summary: Get a payment by ID.
+      description: Fetch a single payment by ID.
+      operationId: getPaymentById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "404":
+          description: Payment not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+    put:
+      tags:
+      - payment-controller
+      summary: Update a payment.
+      description: Update an existing payment.
+      operationId: updatePayment
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentDTO"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "404":
+          description: Payment not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+  /api/v1/contracts/{id}:
+    get:
+      tags:
+      - contract-controller
+      summary: Get a contract by ID.
+      description: Fetch a single contract by ID.
+      operationId: getContractById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "404":
+          description: Contract not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+    put:
+      tags:
+      - contract-controller
+      summary: Update a contract.
+      description: Update an existing contract.
+      operationId: updateContract
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractDTO"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "404":
+          description: Contract not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+  /api/v1/clients/{id}:
+    get:
+      tags:
+      - client-controller
+      summary: Get a client by ID.
+      description: Fetch a single client by ID.
+      operationId: getClientById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "404":
+          description: Client not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+    put:
+      tags:
+      - client-controller
+      summary: Update a client.
+      description: Update an existing client.
+      operationId: updateClient
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientDTO"
+        required: true
+      responses:
+        "200":
+          description: Successfully updated.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "404":
+          description: Client not found
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+  /api/v1/payments:
+    get:
+      tags:
+      - payment-controller
+      summary: Get all payments.
+      description: Fetch all payment records.
+      operationId: getAllPayments
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+    post:
+      tags:
+      - payment-controller
+      summary: Create payment entity.
+      description: Create a new payment.
+      operationId: createPayment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentDTO"
+        required: true
+      responses:
+        "201":
+          description: Successfully created.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PaymentDTO"
+  /api/v1/payments/upload:
+    post:
+      tags:
+      - payment-controller
+      summary: Upload payments via CSV
+      description: Upload and process a CSV file to create payment entries.
+      operationId: uploadCsvFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+              - file
+      responses:
+        "200":
+          description: File processed successfully.
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid CSV format.
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/v1/contracts:
+    get:
+      tags:
+      - contract-controller
+      summary: Get all contracts.
+      description: Fetch all contract records.
+      operationId: getAllContracts
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContractDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContractDTO"
+    post:
+      tags:
+      - contract-controller
+      summary: Create contract entity.
+      description: Create a new contract.
+      operationId: createContract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractCreateDTO"
+        required: true
+      responses:
+        "201":
+          description: Successfully created.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+  /api/v1/clients:
+    get:
+      tags:
+      - client-controller
+      summary: Get all clients.
+      description: Fetch all client records.
+      operationId: getAllClients
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientDTO"
+    post:
+      tags:
+      - client-controller
+      summary: Create client entity.
+      description: Create client entity.
+      operationId: createClient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientCreateDTO"
+        required: true
+      responses:
+        "201":
+          description: Successfully created.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "400":
+          description: Bad Request.
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ClientDTO"
+  /api/v1/payments/contracts/{contractNumber}/payments:
+    get:
+      tags:
+      - payment-controller
+      summary: Get payments by contract.
+      description: Fetch payment records for contract.
+      operationId: findPaymentsByContractNumber
+      parameters:
+      - name: contractNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful retrieval.
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+components:
+  schemas:
+    PaymentDTO:
+      type: object
+      properties:
+        paymentDate:
+          type: string
+          minLength: 1
+          pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+        amount:
+          type: number
+          format: double
+        type:
+          type: string
+          minLength: 1
+        contract_number:
+          type: string
+          minLength: 1
+      required:
+      - contract_number
+      - paymentDate
+      - type
+    ContractDTO:
+      type: object
+      properties:
+        contractId:
+          type: integer
+          format: int64
+        clientId:
+          type: integer
+          format: int64
+        contractNumber:
+          type: string
+    ClientDTO:
+      type: object
+      properties:
+        clientId:
+          type: integer
+          format: int64
+        clientName:
+          type: string
+    ContractCreateDTO:
+      type: object
+      properties:
+        clientId:
+          type: integer
+          format: int64
+        contractNumber:
+          type: string
+    ClientCreateDTO:
+      type: object
+      properties:
+        clientName:
+          type: string
