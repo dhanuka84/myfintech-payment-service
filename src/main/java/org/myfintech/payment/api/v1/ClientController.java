@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -51,8 +50,8 @@ public class ClientController {
 	// ===============================
 	@GetMapping
 	@Operation(summary = "Get all clients.", description = "Fetch all client records.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successful retrieval."),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successful retrieval.")
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<List<ClientDTO>> getAllClients() {
 		List<ClientDTO> clients = clientService.findAll();
 		return ResponseEntity.ok(clients);
@@ -63,9 +62,9 @@ public class ClientController {
 	// ===============================
 	@GetMapping("/{id}")
 	@Operation(summary = "Get a client by ID.", description = "Fetch a single client by ID.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successful retrieval."),
-			@ApiResponse(responseCode = "404", description = "Client not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successful retrieval.")
+	@ApiResponse(responseCode = "404", description = "Client not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<ClientDTO> getClientById(
 			@Parameter(description = "The Id to fetch client for", required = true) @ValidId @PathVariable Long id) {
 
@@ -78,9 +77,9 @@ public class ClientController {
 	// ===============================
 	@PostMapping
 	@Operation(summary = "Create client entity.", description = "Create client entity.")
-	@ApiResponses({ @ApiResponse(responseCode = "201", description = "Successfully created."),
-			@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "201", description = "Successfully created.")
+	@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<ClientDTO> createClient(@Valid @RequestBody ClientCreateDTO client) {
 
 		ClientDTO savedClient = clientService.save(client);
@@ -92,10 +91,10 @@ public class ClientController {
 	// ===============================
 	@PutMapping("/{id}")
 	@Operation(summary = "Update a client.", description = "Update an existing client.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successfully updated."),
-			@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "404", description = "Client not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successfully updated.")
+	@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "404", description = "Client not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<ClientDTO> updateClient(
 			@Parameter(description = "The Id to fetch client for", required = true) @ValidId @PathVariable Long id,
 			@Valid @RequestBody ClientDTO client) {

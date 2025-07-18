@@ -66,7 +66,6 @@ class PaymentServiceImplTest {
 	private PaymentCreateDTO paymentCreateDTO;
 	private Payment payment;
 	private Contract contract;
-	private PaymentDTO paymentDTO;
 
 	@BeforeEach
 	void setUp() {
@@ -83,7 +82,6 @@ class PaymentServiceImplTest {
 		payment.setContract(contract);
 
 		paymentCreateDTO = new PaymentCreateDTO("2024-01-30", 1000.0, "incoming", "12345", "tr-1");
-		paymentDTO = new PaymentDTO("2024-01-30", 1000.0, "incoming", "12345");
 	}
 
 	@Test

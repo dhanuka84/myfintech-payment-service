@@ -8,11 +8,12 @@ package org.myfintech.payment.exception;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Http400BadRequest extends RuntimeException
 {
-    private List<String> errors;
+    private static final long serialVersionUID = 1L;
+    
+	private List<String> errors;
     public Http400BadRequest( String message )
     {
         super( message );

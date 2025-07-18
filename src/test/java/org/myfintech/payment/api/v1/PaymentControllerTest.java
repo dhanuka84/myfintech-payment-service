@@ -137,7 +137,6 @@ public class PaymentControllerTest {
 
     @Test
     void shouldUpdatePayment() throws Exception {
-        PaymentDTO request = new PaymentDTO("2024-01-04", 400.0, "outgoing", "C321");
         PaymentDTO updated = new PaymentDTO("2024-01-04", 400.0, "outgoing", "C321");
 
         String requestJson = """

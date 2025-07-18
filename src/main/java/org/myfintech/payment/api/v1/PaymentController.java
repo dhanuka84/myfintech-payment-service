@@ -44,7 +44,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,9 +68,9 @@ public class PaymentController {
 	@PostMapping(value = "/upload/{trackingNumber}", consumes = {
 			"multipart/form-data" }, produces = "application/json")
 	@Operation(summary = "Upload payments via CSV", description = "Upload and process a file to create payment entries.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "File processed successfully."),
-			@ApiResponse(responseCode = "400", description = "Invalid format.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "File processed successfully.")
+	@ApiResponse(responseCode = "400", description = "Invalid format.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<Map<String, Object>> uploadFile(
 			@Parameter(description = "The trackingNumber to upload payments for", required = true) @ValidContractNumber @PathVariable String trackingNumber,
 			@RequestParam("file") MultipartFile file) {
@@ -93,17 +92,14 @@ public class PaymentController {
 		return ResponseEntity.ok(Map.of("message", "Successfully processed payments", "count", payments.size()));
 	}
 
-	
-
 	// ===============================
 	// Get All Payments (Paginated)
 	// ===============================
 	@GetMapping
 	@PageableAsQueryParam // Enables page, size, sort as query params in Swagger
 	@Operation(summary = "Get all payments (paginated).", description = "Fetch all payment records with pagination support. Use query parameters to control pagination and sorting.")
-	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "Successful retrieval.", content = @Content(schema = @Schema(implementation = Page.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successful retrieval.", content = @Content(schema = @Schema(implementation = Page.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<Page<PaymentDTO>> getAllPayments(
 			@PageableDefault(size = 20, sort = "id") @SortDefault.SortDefaults({
 					@SortDefault(sort = "paymentDate", direction = Sort.Direction.DESC),
@@ -121,8 +117,8 @@ public class PaymentController {
 	// ========================================
 	@GetMapping("/by-contract/{contractNumber}")
 	@Operation(summary = "Get payments by contract.", description = "Fetch payment records for a given contract.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successful retrieval."),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successful retrieval.")
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<List<PaymentDTO>> findPaymentsByContractNumber(
 			@Parameter(description = "The contract number to fetch payments for", required = true) @ValidContractNumber @PathVariable String contractNumber) {
 
@@ -135,9 +131,9 @@ public class PaymentController {
 	// ===============================
 	@GetMapping(path = "/{id}", produces = "application/json")
 	@Operation(summary = "Get a payment by ID.", description = "Fetch a single payment by ID.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successful retrieval."),
-			@ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successful retrieval.")
+	@ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<PaymentDTO> getPaymentById(
 			@Parameter(description = "The Id to fetch payments for", required = true) @ValidId @PathVariable Long id) {
 
@@ -150,9 +146,9 @@ public class PaymentController {
 	// ===============================
 	@PostMapping(consumes = "application/json", produces = "application/json")
 	@Operation(summary = "Create payment entity.", description = "Create a new payment.")
-	@ApiResponses({ @ApiResponse(responseCode = "201", description = "Successfully created."),
-			@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "201", description = "Successfully created.")
+	@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<PaymentDTO> createPayment(@Valid @RequestBody PaymentCreateDTO payment) {
 		PaymentDTO created = paymentService.save(payment);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -163,10 +159,10 @@ public class PaymentController {
 	// ===============================
 	@PutMapping(path = "/{id}", consumes = "application/json", produces = "application/json")
 	@Operation(summary = "Update a payment.", description = "Update an existing payment.")
-	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successfully updated."),
-			@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
-			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
+	@ApiResponse(responseCode = "200", description = "Successfully updated.")
+	@ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
+	@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class)))
 	public ResponseEntity<PaymentDTO> updatePayment(
 			@Parameter(description = "The Id to update payment for", required = true) @ValidId @PathVariable Long id,
 			@Valid @RequestBody PaymentDTO payment) {

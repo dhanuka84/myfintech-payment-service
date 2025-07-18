@@ -149,7 +149,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 MESSAGE_KEY, cv.getMessage(),
                 INVALID_VALUE_KEY, cv.getInvalidValue() != null ? cv.getInvalidValue().toString() : NULL_VALUE
             ))
-            .collect(Collectors.toList()));
+            .toList());
         detail.setProperty(ERROR_CODE_KEY, VALIDATION_FAILED_CODE);
         
         return ResponseEntity.badRequest().body(detail);
@@ -182,7 +182,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     MESSAGE_KEY, e.getDefaultMessage() != null ? e.getDefaultMessage() : INVALID_VALUE_DEFAULT,
                     REJECTED_VALUE_KEY, e.getRejectedValue() != null ? e.getRejectedValue().toString() : NULL_VALUE
                 ))
-                .collect(Collectors.toList()));
+                .toList());
         }
         
         if (!ex.getBindingResult().getGlobalErrors().isEmpty()) {
@@ -191,7 +191,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     OBJECT_KEY, e.getObjectName(),
                     MESSAGE_KEY, e.getDefaultMessage() != null ? e.getDefaultMessage() : INVALID_OBJECT_DEFAULT
                 ))
-                .collect(Collectors.toList()));
+                .toList());
         }
         
         detail.setProperty(VALIDATION_ERRORS_KEY, validationErrors);

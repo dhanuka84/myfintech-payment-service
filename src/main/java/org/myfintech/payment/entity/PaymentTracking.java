@@ -12,7 +12,7 @@ package org.myfintech.payment.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +20,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true,callSuper = true)
 @Entity
 @Table(name = "payment_tracking")
 public class PaymentTracking extends AbstractEntity<Long> {
 
     @Column(name = "tracking_number", nullable = false, unique = true, length = 100)
+    @EqualsAndHashCode.Include
     private String trackingNumber;
 
     public PaymentTracking(String trackingNumber) {
