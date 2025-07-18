@@ -119,7 +119,7 @@ public class PaymentController {
 	// ========================================
 	// Get Payments by Contract Number
 	// ========================================
-	@GetMapping("/contracts/{contractNumber}/payments")
+	@GetMapping("/by-contract/{contractNumber}")
 	@Operation(summary = "Get payments by contract.", description = "Fetch payment records for a given contract.")
 	@ApiResponses({ @ApiResponse(responseCode = "200", description = "Successful retrieval."),
 			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
