@@ -72,7 +72,7 @@ public class PaymentController {
 	@ApiResponses({ @ApiResponse(responseCode = "200", description = "File processed successfully."),
 			@ApiResponse(responseCode = "400", description = "Invalid format.", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))),
 			@ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ProblemDetailSchema.class))) })
-	public ResponseEntity<?> uploadFile(
+	public ResponseEntity<Map<String, Object>> uploadFile(
 			@Parameter(description = "The trackingNumber to upload payments for", required = true) @ValidContractNumber @PathVariable String trackingNumber,
 			@RequestParam("file") MultipartFile file) {
 

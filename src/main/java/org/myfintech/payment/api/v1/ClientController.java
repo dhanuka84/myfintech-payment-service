@@ -99,7 +99,7 @@ public class ClientController {
 	public ResponseEntity<ClientDTO> updateClient(
 			@Parameter(description = "The Id to fetch client for", required = true) @ValidId @PathVariable Long id,
 			@Valid @RequestBody ClientDTO client) {
-
+		clientService.validate(client);
 		ClientDTO updatedClient = clientService.update(id, client);
 		return ResponseEntity.ok(updatedClient);
 	}

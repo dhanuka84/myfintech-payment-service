@@ -52,7 +52,6 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public ClientDTO update(Long id, ClientDTO dto) {
-    	validate(dto);
         Client client = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("client not found: " + id));
         client.setClientName(dto.clientName());
         return mapper.toDTO(client);

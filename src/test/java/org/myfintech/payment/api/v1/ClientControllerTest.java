@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.myfintech.payment.domain.ClientCreateDTO;
 import org.myfintech.payment.domain.ClientDTO;
 import org.myfintech.payment.service.ClientService;
-import org.myfintech.payment.validator.ClientValidator;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
