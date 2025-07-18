@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author : Dhanuka Ranasinghe
- * @since : Date: 4/12/2024
- */
 public class Http400BadRequest extends RuntimeException
 {
     private List<String> errors;

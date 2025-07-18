@@ -8,6 +8,7 @@ import org.myfintech.payment.domain.ContractCreateDTO;
 import org.myfintech.payment.domain.ContractDTO;
 import org.myfintech.payment.entity.Contract;
 import org.myfintech.payment.entity.projection.ContractWithClientProjection;
+import org.myfintech.payment.exception.Http404NotFoundException;
 import org.myfintech.payment.mapper.ContractMapper;
 import org.myfintech.payment.repository.ContractRepository;
 import org.myfintech.payment.service.ClientService;
@@ -45,15 +46,15 @@ public class ContractServiceImpl implements ContractService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional
 	public ContractDTO save(ContractCreateDTO dto) {
 		return mapper.toDTO(repository.save(mapper.toEntity(dto, clientService.findEntityById(dto.clientId()))));
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional
 	public ContractDTO update(Long id, ContractDTO dto) {
-		Contract contract = repository.findById(id).orElseThrow();
+		Contract contract = repository.findById(id).orElseThrow(() -> new Http404NotFoundException("Contract not found: " + id));
 		contract.setContractNumber(dto.contractNumber());
 		return mapper.toDTO(contract);
 	}
@@ -62,7 +63,7 @@ public class ContractServiceImpl implements ContractService {
 	@Transactional(readOnly = true)
 	public Optional<Contract> findByContractNumber(String contractNumber) {
 		return Optional.of(repository.findByContractNumber(contractNumber)
-				.orElseThrow(() -> new IllegalArgumentException("Contract not found: " + contractNumber)));
+				.orElseThrow(() -> new Http404NotFoundException("Contract not found: " + contractNumber)));
 	}
 
 	@Override

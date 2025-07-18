@@ -5,6 +5,7 @@ import java.util.List;
 import org.myfintech.payment.domain.PaymentDTO;
 import org.myfintech.payment.entity.Payment;
 import org.myfintech.payment.entity.PaymentTracking;
+import org.myfintech.payment.exception.Http404NotFoundException;
 import org.myfintech.payment.mapper.PaymentMapper;
 import org.myfintech.payment.repository.PaymentRepository;
 import org.myfintech.payment.repository.PaymentTrackingRepository;
@@ -13,10 +14,8 @@ import org.myfintech.payment.validator.PaymentValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,7 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
 	@Transactional(readOnly = true)
 	public Payment findById(Long id) {
 		return paymentRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Payment not found with id: " + id));
+				.orElseThrow(() -> new Http404NotFoundException("Payment not found with id: " + id));
 	}
 
 	@Override
@@ -57,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional
 	public List<Payment> savePayments(List<Payment> paymentEntities) {
 		// Save all Payment entities
 		return paymentRepository.saveAll(paymentEntities);
@@ -65,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 	
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional
 	public Payment savePayment(Payment payement) {
 		return paymentRepository.save(payement);
 
@@ -79,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
 	 * @param trackingNumber  The unique tracking number for this batch.
 	 * @param paymentEntities The list of fully-formed Payment entities to save.
 	 */
-	@Transactional(readOnly = false) // Default propagation is REQUIRED, so it joins the caller's transaction.
+	@Transactional // Default propagation is REQUIRED, so it joins the caller's transaction.
 	public void saveTrackedPayments(String trackingNumber, List<Payment> paymentEntities) {
 		// Step 1: Save the master tracking record.
 		PaymentTracking paymentTracking = trackingRepository.save(new PaymentTracking(trackingNumber));
@@ -97,14 +96,14 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+	@Transactional
 	public Payment savePayment(Payment payment, String trackingNumber) {
 		PaymentTracking tracking = trackingRepository.save(new PaymentTracking(trackingNumber));
 		payment.setTrackingId(tracking.getId());
 		return paymentRepository.save(payment);
 	}
 	
-	@Transactional(propagation = Propagation.SUPPORTS)
+	@Transactional(readOnly = true)
 	public void validate(PaymentDTO dto) {
 		validator.validatePaymentRequest(dto);
 	}

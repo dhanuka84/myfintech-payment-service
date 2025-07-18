@@ -12,6 +12,7 @@ import org.myfintech.payment.domain.ClientCreateDTO;
 
 import org.myfintech.payment.domain.ClientDTO;
 import org.myfintech.payment.entity.Client;
+import org.myfintech.payment.exception.Http404NotFoundException;
 import org.myfintech.payment.mapper.ClientMapper;
 import org.myfintech.payment.repository.ClientRepository;
 import org.myfintech.payment.service.ClientService;
@@ -43,13 +44,13 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public ClientDTO save(ClientCreateDTO dto) {
         return mapper.toDTO(repository.save(mapper.toEntity(dto)));
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public ClientDTO update(Long id, ClientDTO dto) {
     	validate(dto);
         Client client = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("client not found: " + id));
@@ -59,7 +60,7 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public Client findEntityById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new IllegalArgumentException("client not found: " + id));
+		return repository.findById(id).orElseThrow(() -> new Http404NotFoundException("client not found: " + id));
 	}
 
 	@Override
