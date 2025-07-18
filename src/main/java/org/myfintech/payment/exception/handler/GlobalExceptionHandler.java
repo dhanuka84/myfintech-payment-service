@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.myfintech.payment.exception.FileParsingException;
 import org.myfintech.payment.exception.FileProcessingException;
 import org.myfintech.payment.exception.Http400BadRequest;
 import org.myfintech.payment.exception.Http404NotFoundException;
@@ -229,6 +230,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         
         return ResponseEntity.badRequest().body(detail);
     }
+    
+    @ExceptionHandler(FileParsingException.class)
+    public ResponseEntity<ProblemDetail> handleFileParsing(FileParsingException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        log.warn("File parsing error [{}]: {}", errorId, ex.getMessage());
+
+        ProblemDetail detail = createProblemDetail(
+            HttpStatus.BAD_REQUEST,
+            "File Parsing Error",
+            ex.getMessage(),
+            errorId,
+            request
+        );
+        detail.setProperty(ERROR_CODE_KEY, "FILE_PARSING_ERROR");
+
+        return ResponseEntity.badRequest().body(detail);
+    }
+
 
     // ================== Data/Infrastructure Exceptions (LOG: ERROR) ================== //
     

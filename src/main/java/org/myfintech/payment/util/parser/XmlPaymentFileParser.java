@@ -11,13 +11,16 @@ package org.myfintech.payment.util.parser;
 
 import java.io.InputStream;
 import java.util.List;
+
+import org.myfintech.payment.domain.PaymentDTO;
+import org.myfintech.payment.domain.PaymentDTOListWrapper;
+import org.myfintech.payment.exception.FileParsingException;
+import org.myfintech.payment.util.jaxb.JAXBContextPool;
+import org.springframework.stereotype.Component;
+
 import jakarta.xml.bind.Unmarshaller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.myfintech.payment.domain.PaymentDTO;
-import org.myfintech.payment.domain.PaymentDTOListWrapper;
-import org.myfintech.payment.util.jaxb.JAXBContextPool;
-import org.springframework.stereotype.Component;
 
 /**
  * XML payment file parser that uses JAXBContext pooling for improved performance.
@@ -53,7 +56,7 @@ public class XmlPaymentFileParser implements PaymentFileParser {
             
         } catch (Exception e) {
             log.error("Error parsing XML payment file", e);
-            throw new RuntimeException("Failed to parse XML payment file", e);
+            throw new FileParsingException("Failed to parse XML payment file", e);
         } finally {
             // Always return unmarshaller to pool
             if (unmarshaller != null) {
