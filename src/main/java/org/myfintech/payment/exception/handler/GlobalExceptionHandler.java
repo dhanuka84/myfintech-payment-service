@@ -31,6 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.*;
+
 /**
  * Global exception handler for the payment service.
  * Handles exceptions with appropriate logging levels and user-friendly responses.
@@ -38,11 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private static final String ERROR_ID_KEY = "errorId";
-    private static final String TIMESTAMP_KEY = "timestamp";
-    private static final String PATH_KEY = "path";
-    private static final String ERROR_CODE_KEY = "errorCode";
     
     @Value("${myfintech.error.include-stacktrace:false}")
     private boolean includeStackTrace;
@@ -55,16 +52,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Http404NotFoundException.class)
     public ResponseEntity<ProblemDetail> handleNotFound(Http404NotFoundException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        log.warn("Resource not found [{}]: {} - Path: {}", errorId, ex.getMessage(), request.getRequestURI());
+        log.warn(RESOURCE_NOT_FOUND_LOG, errorId, ex.getMessage(), request.getRequestURI());
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.NOT_FOUND, 
-            "Resource Not Found", 
+            RESOURCE_NOT_FOUND_TITLE, 
             ex.getMessage(),
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "RESOURCE_NOT_FOUND");
+        detail.setProperty(ERROR_CODE_KEY, RESOURCE_NOT_FOUND_CODE);
         
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detail);
     }
@@ -72,20 +69,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Http400BadRequest.class)
     public ResponseEntity<ProblemDetail> handleCustomBadRequest(Http400BadRequest ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        log.warn("Bad request [{}]: {} - Errors: {}", errorId, ex.getMessage(), ex.getErrors());
+        log.warn(BAD_REQUEST_LOG, errorId, ex.getMessage(), ex.getErrors());
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST, 
-            "Bad Request", 
+            BAD_REQUEST_TITLE, 
             ex.getMessage(),
             errorId,
             request
         );
         
         if (!ex.getErrors().isEmpty()) {
-            detail.setProperty("validationErrors", ex.getErrors());
+            detail.setProperty(VALIDATION_ERRORS_KEY, ex.getErrors());
         }
-        detail.setProperty(ERROR_CODE_KEY, "BAD_REQUEST");
+        detail.setProperty(ERROR_CODE_KEY, BAD_REQUEST_CODE);
         
         return ResponseEntity.badRequest().body(detail);
     }
@@ -95,17 +92,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ProblemDetail> handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        // INFO level - this is a client error, not a system issue
-        log.info("Invalid argument [{}]: {}", errorId, ex.getMessage());
+        log.info(INVALID_ARGUMENT_LOG, errorId, ex.getMessage());
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST, 
-            "Invalid Argument", 
+            INVALID_ARGUMENT_TITLE, 
             ex.getMessage(),
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "INVALID_ARGUMENT");
+        detail.setProperty(ERROR_CODE_KEY, INVALID_ARGUMENT_CODE);
         
         return ResponseEntity.badRequest().body(detail);
     }
@@ -113,24 +109,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ProblemDetail> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        String message = String.format("Parameter '%s' must be of type %s", 
+        String message = String.format(TYPE_MISMATCH_MESSAGE_TEMPLATE, 
             ex.getName(), 
-            ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
+            ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : UNKNOWN_TYPE);
         
-        // INFO level - client provided wrong type
-        log.info("Type mismatch [{}]: {}", errorId, message);
+        log.info(TYPE_MISMATCH_LOG, errorId, message);
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST, 
-            "Type Mismatch", 
+            TYPE_MISMATCH_TITLE, 
             message,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "TYPE_MISMATCH");
-        detail.setProperty("parameter", ex.getName());
-        detail.setProperty("expectedType", ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown");
-        detail.setProperty("actualValue", ex.getValue());
+        detail.setProperty(ERROR_CODE_KEY, TYPE_MISMATCH_CODE);
+        detail.setProperty(PARAMETER_KEY, ex.getName());
+        detail.setProperty(EXPECTED_TYPE_KEY, ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : UNKNOWN_TYPE);
+        detail.setProperty(ACTUAL_VALUE_KEY, ex.getValue());
         
         return ResponseEntity.badRequest().body(detail);
     }
@@ -138,25 +133,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ProblemDetail> handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        // INFO level - validation errors are client issues
-        log.info("Constraint violations [{}]: {}", errorId, ex.getConstraintViolations().size());
+        log.info(CONSTRAINT_VIOLATIONS_LOG, errorId, ex.getConstraintViolations().size());
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST, 
-            "Validation Failed", 
-            "One or more validation constraints were violated",
+            VALIDATION_FAILED_TITLE, 
+            VALIDATION_CONSTRAINTS_VIOLATED,
             errorId,
             request
         );
         
-        detail.setProperty("validationErrors", ex.getConstraintViolations().stream()
+        detail.setProperty(VALIDATION_ERRORS_KEY, ex.getConstraintViolations().stream()
             .map(cv -> Map.of(
-                "field", cv.getPropertyPath().toString(), 
-                "message", cv.getMessage(),
-                "invalidValue", cv.getInvalidValue() != null ? cv.getInvalidValue().toString() : "null"
+                FIELD_KEY, cv.getPropertyPath().toString(), 
+                MESSAGE_KEY, cv.getMessage(),
+                INVALID_VALUE_KEY, cv.getInvalidValue() != null ? cv.getInvalidValue().toString() : NULL_VALUE
             ))
             .collect(Collectors.toList()));
-        detail.setProperty(ERROR_CODE_KEY, "VALIDATION_FAILED");
+        detail.setProperty(ERROR_CODE_KEY, VALIDATION_FAILED_CODE);
         
         return ResponseEntity.badRequest().body(detail);
     }
@@ -169,42 +163,38 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         
         String errorId = generateErrorId();
-        // INFO level - validation errors
-        log.info("Method argument validation failed [{}]: {} errors", 
-            errorId, ex.getBindingResult().getErrorCount());
+        log.info(METHOD_ARGUMENT_VALIDATION_LOG, errorId, ex.getBindingResult().getErrorCount());
 
         ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        detail.setTitle("Validation Failed");
-        detail.setDetail("Request validation failed. Please check the errors and try again.");
-        detail.setType(URI.create(errorBaseUri + "validation-failed"));
+        detail.setTitle(VALIDATION_FAILED_TITLE);
+        detail.setDetail(REQUEST_VALIDATION_FAILED);
+        detail.setType(URI.create(errorBaseUri + VALIDATION_FAILED_URI_SUFFIX));
         detail.setProperty(ERROR_ID_KEY, errorId);
         detail.setProperty(TIMESTAMP_KEY, Instant.now());
-        detail.setProperty(ERROR_CODE_KEY, "VALIDATION_FAILED");
+        detail.setProperty(ERROR_CODE_KEY, VALIDATION_FAILED_CODE);
         
         Map<String, Object> validationErrors = new HashMap<>();
         
-        // Field errors
         if (!ex.getBindingResult().getFieldErrors().isEmpty()) {
-            validationErrors.put("fieldErrors", ex.getBindingResult().getFieldErrors().stream()
+            validationErrors.put(FIELD_ERRORS_KEY, ex.getBindingResult().getFieldErrors().stream()
                 .map(e -> Map.of(
-                    "field", e.getField(),
-                    "message", e.getDefaultMessage() != null ? e.getDefaultMessage() : "Invalid value",
-                    "rejectedValue", e.getRejectedValue() != null ? e.getRejectedValue().toString() : "null"
+                    FIELD_KEY, e.getField(),
+                    MESSAGE_KEY, e.getDefaultMessage() != null ? e.getDefaultMessage() : INVALID_VALUE_DEFAULT,
+                    REJECTED_VALUE_KEY, e.getRejectedValue() != null ? e.getRejectedValue().toString() : NULL_VALUE
                 ))
                 .collect(Collectors.toList()));
         }
         
-        // Global errors
         if (!ex.getBindingResult().getGlobalErrors().isEmpty()) {
-            validationErrors.put("globalErrors", ex.getBindingResult().getGlobalErrors().stream()
+            validationErrors.put(GLOBAL_ERRORS_KEY, ex.getBindingResult().getGlobalErrors().stream()
                 .map(e -> Map.of(
-                    "object", e.getObjectName(),
-                    "message", e.getDefaultMessage() != null ? e.getDefaultMessage() : "Invalid object"
+                    OBJECT_KEY, e.getObjectName(),
+                    MESSAGE_KEY, e.getDefaultMessage() != null ? e.getDefaultMessage() : INVALID_OBJECT_DEFAULT
                 ))
                 .collect(Collectors.toList()));
         }
         
-        detail.setProperty("validationErrors", validationErrors);
+        detail.setProperty(VALIDATION_ERRORS_KEY, validationErrors);
 
         return new ResponseEntity<>(detail, HttpStatus.BAD_REQUEST);
     }
@@ -212,20 +202,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FileProcessingException.class)
     public ResponseEntity<ProblemDetail> handleFileProcessing(FileProcessingException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        // WARN level - file processing might be a business logic issue
-        log.warn("File processing error [{}]: {} - File: {}", 
-            errorId, ex.getMessage(), ex.getFileName() != null ? ex.getFileName() : "unknown");
+        log.warn(FILE_PROCESSING_ERROR_LOG, 
+            errorId, ex.getMessage(), ex.getFileName() != null ? ex.getFileName() : UNKNOWN_FILE);
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST, 
-            "File Processing Error", 
+            FILE_PROCESSING_ERROR_TITLE, 
             ex.getMessage(),
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "FILE_PROCESSING_ERROR");
+        detail.setProperty(ERROR_CODE_KEY, FILE_PROCESSING_ERROR_CODE);
         if (ex.getFileName() != null) {
-            detail.setProperty("fileName", ex.getFileName());
+            detail.setProperty(FILE_NAME_KEY, ex.getFileName());
         }
         
         return ResponseEntity.badRequest().body(detail);
@@ -234,20 +223,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(FileParsingException.class)
     public ResponseEntity<ProblemDetail> handleFileParsing(FileParsingException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        log.warn("File parsing error [{}]: {}", errorId, ex.getMessage());
+        log.warn(FILE_PARSING_ERROR_LOG, errorId, ex.getMessage());
 
         ProblemDetail detail = createProblemDetail(
             HttpStatus.BAD_REQUEST,
-            "File Parsing Error",
+            FILE_PARSING_ERROR_TITLE,
             ex.getMessage(),
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "FILE_PARSING_ERROR");
+        detail.setProperty(ERROR_CODE_KEY, FILE_PARSING_ERROR_CODE);
 
         return ResponseEntity.badRequest().body(detail);
     }
-
 
     // ================== Data/Infrastructure Exceptions (LOG: ERROR) ================== //
     
@@ -256,27 +244,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errorId = generateErrorId();
         String rootCause = extractRootCauseMessage(ex);
         
-        // Log at ERROR level with full details for debugging
-        log.error("Data integrity violation [{}]: {} - Root cause: {}", errorId, ex.getMessage(), rootCause, ex);
+        log.error(DATA_INTEGRITY_VIOLATION_LOG, errorId, ex.getMessage(), rootCause, ex);
         
-        // Don't expose internal database details to client
-        String userMessage = "Unable to process request due to data constraints";
+        String userMessage = DATA_CONSTRAINTS_ERROR;
         
-        // Check for common constraint violations
-        if (rootCause.toLowerCase().contains("duplicate")) {
-            userMessage = "A record with the same information already exists";
-        } else if (rootCause.toLowerCase().contains("foreign key")) {
-            userMessage = "Referenced data not found or cannot be deleted due to existing dependencies";
+        if (rootCause.toLowerCase().contains(DUPLICATE_KEYWORD)) {
+            userMessage = DUPLICATE_RECORD_ERROR;
+        } else if (rootCause.toLowerCase().contains(FOREIGN_KEY_KEYWORD)) {
+            userMessage = FOREIGN_KEY_ERROR;
         }
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.CONFLICT, 
-            "Data Constraint Violation", 
+            DATA_CONSTRAINT_VIOLATION_TITLE, 
             userMessage,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "DATA_INTEGRITY_VIOLATION");
+        detail.setProperty(ERROR_CODE_KEY, DATA_INTEGRITY_VIOLATION_CODE);
         
         return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
@@ -284,19 +269,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<ProblemDetail> handleOptimisticLocking(OptimisticLockingFailureException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
-        // WARN level - this is expected in concurrent systems
-        log.warn("Optimistic locking conflict [{}]: {} - Entity: {}", 
-            errorId, ex.getMessage(), extractEntityInfo(ex));
+        log.warn(OPTIMISTIC_LOCKING_LOG, errorId, ex.getMessage(), extractEntityInfo(ex));
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.CONFLICT, 
-            "Concurrent Update Conflict", 
-            "The record was modified by another user. Please refresh and try again.",
+            CONCURRENT_UPDATE_CONFLICT_TITLE, 
+            OPTIMISTIC_LOCK_MESSAGE,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "OPTIMISTIC_LOCK_CONFLICT");
-        detail.setProperty("suggestion", "Refresh the data and retry your changes");
+        detail.setProperty(ERROR_CODE_KEY, OPTIMISTIC_LOCK_CONFLICT_CODE);
+        detail.setProperty(SUGGESTION_KEY, OPTIMISTIC_LOCK_SUGGESTION);
         
         return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
@@ -306,22 +289,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errorId = generateErrorId();
         String rootCause = extractRootCauseMessage(ex);
         
-        // ERROR level - transaction failures need investigation
-        log.error("Transaction system error [{}]: {} - Root cause: {}", errorId, ex.getMessage(), rootCause, ex);
+        log.error(TRANSACTION_ERROR_LOG, errorId, ex.getMessage(), rootCause, ex);
         
-        // Check if it's actually a validation error wrapped in transaction exception
         if (ex.getRootCause() instanceof ConstraintViolationException) {
             return handleConstraintViolation((ConstraintViolationException) ex.getRootCause(), request);
         }
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.INTERNAL_SERVER_ERROR, 
-            "Transaction Failed", 
-            "Unable to complete the transaction. Please try again.",
+            TRANSACTION_FAILED_TITLE, 
+            TRANSACTION_COMPLETION_ERROR,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "TRANSACTION_ERROR");
+        detail.setProperty(ERROR_CODE_KEY, TRANSACTION_ERROR_CODE);
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
     }
@@ -337,24 +318,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ProblemDetail> handleProgrammingError(RuntimeException ex, HttpServletRequest request) {
         String errorId = generateErrorId();
         
-        // CRITICAL ERROR - This is a bug!
-        log.error("CRITICAL: Programming error detected [{}] - THIS IS A BUG! Exception: {} at {}", 
+        log.error(PROGRAMMING_ERROR_LOG, 
             errorId, 
             ex.getClass().getSimpleName(), 
-            ex.getStackTrace().length > 0 ? ex.getStackTrace()[0] : "unknown location", 
+            ex.getStackTrace().length > 0 ? ex.getStackTrace()[0] : UNKNOWN_LOCATION, 
             ex);
-        
-        // TODO: Add alerting service call here
-        // alertingService.notifyCriticalError(errorId, ex);
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.INTERNAL_SERVER_ERROR, 
-            "Internal Server Error", 
-            "An unexpected error occurred. Our team has been notified.",
+            INTERNAL_SERVER_ERROR_TITLE, 
+            UNEXPECTED_ERROR_WITH_NOTIFICATION,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "INTERNAL_ERROR");
+        detail.setProperty(ERROR_CODE_KEY, INTERNAL_ERROR_CODE);
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
     }
@@ -366,23 +343,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         String errorId = generateErrorId();
         
         if (isFrameworkException(ex)) {
-            // Framework exceptions are usually less critical
-            log.warn("Framework runtime exception [{}]: {} - Type: {}", 
-                errorId, ex.getMessage(), ex.getClass().getName());
+            log.warn(FRAMEWORK_EXCEPTION_LOG, errorId, ex.getMessage(), ex.getClass().getName());
         } else {
-            // Unknown runtime exceptions could be bugs
-            log.error("Unexpected runtime exception [{}]: {} - Type: {}", 
-                errorId, ex.getMessage(), ex.getClass().getName(), ex);
+            log.error(UNEXPECTED_RUNTIME_LOG, errorId, ex.getMessage(), ex.getClass().getName(), ex);
         }
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "Internal Server Error",
-            "An unexpected error occurred",
+            INTERNAL_SERVER_ERROR_TITLE,
+            UNEXPECTED_ERROR_MESSAGE,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "UNEXPECTED_ERROR");
+        detail.setProperty(ERROR_CODE_KEY, UNEXPECTED_ERROR_CODE);
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
     }
@@ -391,18 +364,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ProblemDetail> handleGenericCheckedException(Exception ex, HttpServletRequest request) {
         String errorId = generateErrorId();
         
-        // Checked exceptions reaching here indicate missing specific handlers
-        log.error("Unhandled checked exception [{}] - Missing specific handler for: {} - Message: {}", 
-            errorId, ex.getClass().getName(), ex.getMessage(), ex);
+        log.error(UNHANDLED_CHECKED_LOG, errorId, ex.getClass().getName(), ex.getMessage(), ex);
         
         ProblemDetail detail = createProblemDetail(
             HttpStatus.INTERNAL_SERVER_ERROR,
-            "Internal Server Error",
-            "An unexpected error occurred",
+            INTERNAL_SERVER_ERROR_TITLE,
+            UNEXPECTED_ERROR_MESSAGE,
             errorId,
             request
         );
-        detail.setProperty(ERROR_CODE_KEY, "UNHANDLED_EXCEPTION");
+        detail.setProperty(ERROR_CODE_KEY, UNHANDLED_EXCEPTION_CODE);
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
     }
@@ -418,13 +389,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty(ERROR_ID_KEY, errorId);
         problemDetail.setProperty(TIMESTAMP_KEY, Instant.now());
         problemDetail.setProperty(PATH_KEY, request.getRequestURI());
+        problemDetail.setProperty(METHOD_KEY, request.getMethod());
         
-        // Add request method for better debugging
-        problemDetail.setProperty("method", request.getMethod());
-        
-        // Optionally include stack trace in non-production environments
         if (includeStackTrace) {
-            problemDetail.setProperty("debugInfo", "Check logs with errorId: " + errorId);
+            problemDetail.setProperty(DEBUG_INFO_KEY, String.format(DEBUG_INFO_TEMPLATE, errorId));
         }
         
         return problemDetail;
@@ -447,15 +415,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         while (rootCause.getCause() != null) {
             rootCause = rootCause.getCause();
         }
-        return rootCause.getMessage() != null ? rootCause.getMessage() : "Unknown";
+        return rootCause.getMessage() != null ? rootCause.getMessage() : UNKNOWN_TYPE;
     }
     
     private String extractEntityInfo(OptimisticLockingFailureException ex) {
-        // Try to extract entity information from the exception message
         String message = ex.getMessage();
-        if (message != null && message.contains("entity")) {
+        if (message != null && message.contains(ENTITY_KEYWORD)) {
             return message;
         }
-        return "Unknown entity";
+        return UNKNOWN_ENTITY;
     }
 }

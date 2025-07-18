@@ -20,6 +20,7 @@ import org.myfintech.payment.validator.ClientValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.CLIENT_NOT_FOUND;
 
 @Service
 public class ClientServiceImpl implements ClientService {
@@ -40,7 +41,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDTO findById(Long id) {
-        return repository.findById(id).map(mapper::toDTO).orElseThrow(() -> new IllegalArgumentException("client not found: " + id));
+        return repository.findById(id).map(mapper::toDTO).orElseThrow(() -> new IllegalArgumentException(CLIENT_NOT_FOUND + id));
     }
 
     @Override
@@ -52,14 +53,14 @@ public class ClientServiceImpl implements ClientService {
     @Override
     @Transactional
     public ClientDTO update(Long id, ClientDTO dto) {
-        Client client = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("client not found: " + id));
+        Client client = repository.findById(id).orElseThrow(() -> new IllegalArgumentException(CLIENT_NOT_FOUND + id));
         client.setClientName(dto.clientName());
         return mapper.toDTO(client);
     }
 
 	@Override
 	public Client findEntityById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new Http404NotFoundException("client not found: " + id));
+		return repository.findById(id).orElseThrow(() -> new Http404NotFoundException(CLIENT_NOT_FOUND + id));
 	}
 
 	@Override
