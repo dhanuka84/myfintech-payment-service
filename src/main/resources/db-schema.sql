@@ -28,7 +28,7 @@ CREATE TABLE payment (
     updated_datetime TIMESTAMPTZ NOT NULL,
     tracking_id BIGINT NOT NULL DEFAULT -1,
     CONSTRAINT fk_payment_contract FOREIGN KEY (contract_id) REFERENCES contract(id) ON DELETE CASCADE
-    CONSTRAINT fk_batch_payment_track FOREIGN KEY (batch_id) REFERENCES payment_tracking(id) ON DELETE CASCADE
+    CONSTRAINT fk_payment_tracking FOREIGN KEY (tracking_id) REFERENCES payment_tracking(id) ON DELETE CASCADE
 );
 
 -- Payment Track table
