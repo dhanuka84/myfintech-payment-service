@@ -77,8 +77,11 @@ class PaymentServiceImplTest {
 		Client client = new Client(1L, now, now, "Acme");
 		contract = new Contract(1L, now, now, client, "12345");
 
-		payment = new Payment(1L, now, now, LocalDate.of(2024, 1, 30), BigDecimal.valueOf(1000.0), "incoming", null,
-				null);
+		//payment = new Payment(1L, now, now, LocalDate.of(2024, 1, 30), BigDecimal.valueOf(1000.0), "incoming");
+		payment = new Payment();
+		payment.setPaymentDate(LocalDate.of(2024, 1, 30));
+		payment.setAmount(BigDecimal.valueOf(1000.0));
+		payment.setType("incoming");
 		payment.setContract(contract);
 
 		paymentCreateDTO = new PaymentCreateDTO("2024-01-30", 1000.0, "incoming", "12345", "tr-1");

@@ -69,23 +69,4 @@ public class Payment extends AbstractEntity<Long> {
     @Column(name = "tracking_id", nullable = false)
     @EqualsAndHashCode.Include
     private Long trackingId;
-
-    public Payment(
-            Long id,
-            OffsetDateTime createdDate,
-            OffsetDateTime modifiedDate,
-            LocalDate paymentDate,
-            BigDecimal amount,
-            String type,
-            Long contractId,
-            Long trackingId) {
-        this.setId(id);
-        this.setCreatedDate(createdDate);
-        this.setModifiedDate(modifiedDate);
-        this.paymentDate = paymentDate;
-        this.amount = amount;
-        this.type = type;
-        this.contractId = contractId;
-        this.trackingId = trackingId;
-    }
 }
