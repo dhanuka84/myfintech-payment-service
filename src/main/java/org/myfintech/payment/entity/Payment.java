@@ -11,7 +11,6 @@ package org.myfintech.payment.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,22 +23,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import static org.myfintech.payment.entity.EntityColumnConstants.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true,callSuper = true)
 @Entity
-@Table(name = "payment")
+@Table(name = TABLE_PAYMENT)
 public class Payment extends AbstractEntity<Long> {
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = COMMON_VERSION, nullable = false)
     private Integer version;
 
     @NotNull private LocalDate paymentDate;
@@ -55,18 +54,19 @@ public class Payment extends AbstractEntity<Long> {
     private String type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_id", insertable = false, updatable = false)
+    @JoinColumn(name = FOREIGN_KEY_CONTRACT_ID, insertable = false, updatable = false)
     private Contract contract;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tracking_id", insertable = false, updatable = false)
+    @JoinColumn(name = FOREIGN_KEY_PAYMENT_TRACKING_ID, insertable = false, updatable = false)
     private PaymentTracking paymentTracking;
 
-    @Column(name = "contract_id", nullable = false)
+    //efficient for retrieval
+    @Column(name = FOREIGN_KEY_CONTRACT_ID, nullable = false)
     @EqualsAndHashCode.Include
     private Long contractId;
 
-    @Column(name = "tracking_id", nullable = false)
+    @Column(name = FOREIGN_KEY_PAYMENT_TRACKING_ID, nullable = false)
     @EqualsAndHashCode.Include
     private Long trackingId;
 }
