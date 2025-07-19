@@ -9,6 +9,11 @@
  */
 package org.myfintech.payment.entity;
 
+import static org.myfintech.payment.entity.EntityColumnConstants.COMMON_VERSION;
+import static org.myfintech.payment.entity.EntityColumnConstants.FOREIGN_KEY_CONTRACT_ID;
+import static org.myfintech.payment.entity.EntityColumnConstants.FOREIGN_KEY_PAYMENT_TRACKING_ID;
+import static org.myfintech.payment.entity.EntityColumnConstants.TABLE_PAYMENT;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -27,7 +32,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import static org.myfintech.payment.entity.EntityColumnConstants.*;
 
 @Getter
 @Setter

@@ -23,6 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import static org.myfintech.payment.entity.EntityColumnConstants.*;
 
 @Getter
 @Setter
@@ -37,10 +38,10 @@ public abstract class AbstractEntity<T> {
     @EqualsAndHashCode.Include
     protected T id;
 
-    @Column(name = "created_date", nullable = false, updatable = false)
+    @Column(name = COMMON_CREATED_DATE, nullable = false, updatable = false)
     private OffsetDateTime createdDate;
 
-    @Column(name = "modified_date", nullable = false)
+    @Column(name = COMMON_MODIFIED_DATE, nullable = false)
     private OffsetDateTime modifiedDate;
 
     @PrePersist
