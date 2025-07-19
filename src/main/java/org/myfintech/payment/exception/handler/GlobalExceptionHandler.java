@@ -1,12 +1,94 @@
 package org.myfintech.payment.exception.handler;
 
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.ACTUAL_VALUE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.BAD_REQUEST_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.BAD_REQUEST_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.BAD_REQUEST_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.CONCURRENT_UPDATE_CONFLICT_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.CONSTRAINT_VIOLATIONS_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DATA_CONSTRAINTS_ERROR;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DATA_CONSTRAINT_VIOLATION_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DATA_INTEGRITY_VIOLATION_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DATA_INTEGRITY_VIOLATION_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DEBUG_INFO_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DEBUG_INFO_TEMPLATE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DUPLICATE_KEYWORD;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.DUPLICATE_RECORD_ERROR;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.ENTITY_KEYWORD;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.ERROR_CODE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.ERROR_ID_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.EXPECTED_TYPE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FIELD_ERRORS_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FIELD_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_NAME_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PARSING_ERROR_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PARSING_ERROR_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PARSING_ERROR_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PROCESSING_ERROR_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PROCESSING_ERROR_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FILE_PROCESSING_ERROR_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FOREIGN_KEY_ERROR;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FOREIGN_KEY_KEYWORD;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.FRAMEWORK_EXCEPTION_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.GLOBAL_ERRORS_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INTERNAL_ERROR_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INTERNAL_SERVER_ERROR_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_ARGUMENT_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_ARGUMENT_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_ARGUMENT_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_OBJECT_DEFAULT;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_VALUE_DEFAULT;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.INVALID_VALUE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.MESSAGE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.METHOD_ARGUMENT_VALIDATION_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.METHOD_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.NULL_VALUE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.OBJECT_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.OPTIMISTIC_LOCKING_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.OPTIMISTIC_LOCK_CONFLICT_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.OPTIMISTIC_LOCK_MESSAGE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.OPTIMISTIC_LOCK_SUGGESTION;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.PARAMETER_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.PATH_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.PROGRAMMING_ERROR_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.REJECTED_VALUE_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.REQUEST_VALIDATION_FAILED;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.RESOURCE_NOT_FOUND_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.RESOURCE_NOT_FOUND_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.RESOURCE_NOT_FOUND_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.SUGGESTION_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TIMESTAMP_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TRANSACTION_COMPLETION_ERROR;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TRANSACTION_ERROR_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TRANSACTION_ERROR_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TRANSACTION_FAILED_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TYPE_MISMATCH_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TYPE_MISMATCH_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TYPE_MISMATCH_MESSAGE_TEMPLATE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.TYPE_MISMATCH_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNEXPECTED_ERROR_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNEXPECTED_ERROR_MESSAGE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNEXPECTED_ERROR_WITH_NOTIFICATION;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNEXPECTED_RUNTIME_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNHANDLED_CHECKED_LOG;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNHANDLED_EXCEPTION_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNKNOWN_ENTITY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNKNOWN_FILE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNKNOWN_LOCATION;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.UNKNOWN_TYPE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.VALIDATION_CONSTRAINTS_VIOLATED;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.VALIDATION_ERRORS_KEY;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.VALIDATION_FAILED_CODE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.VALIDATION_FAILED_TITLE;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.VALIDATION_FAILED_URI_SUFFIX;
+
 import java.net.URI;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import org.hibernate.LazyInitializationException;
 import org.myfintech.payment.exception.FileParsingException;
 import org.myfintech.payment.exception.FileProcessingException;
 import org.myfintech.payment.exception.Http400BadRequest;
@@ -30,8 +112,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-
-import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.*;
 
 /**
  * Global exception handler for the payment service.
@@ -235,6 +315,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         detail.setProperty(ERROR_CODE_KEY, FILE_PARSING_ERROR_CODE);
 
         return ResponseEntity.badRequest().body(detail);
+    }
+    
+    @ExceptionHandler(org.hibernate.LazyInitializationException.class)
+    public ResponseEntity<ProblemDetail> handleLazyInitializationException(
+            LazyInitializationException ex, HttpServletRequest request) {
+        String errorId = generateErrorId();
+        log.error("LazyInitializationException [{}]: {} - Path: {}", errorId, ex.getMessage(), request.getRequestURI(), ex);
+
+        ProblemDetail detail = createProblemDetail(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "Data Loading Error",
+            "A required data association could not be loaded. Please contact support or try again.",
+            errorId,
+            request
+        );
+        detail.setProperty(ERROR_CODE_KEY, "LAZY_INITIALIZATION_ERROR");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(detail);
     }
 
     // ================== Data/Infrastructure Exceptions (LOG: ERROR) ================== //

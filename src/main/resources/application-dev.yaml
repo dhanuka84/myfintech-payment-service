@@ -16,6 +16,7 @@ spring:
         order_inserts: true
         order_updates: true
         generate_statistics: true
+      ddl-auto: create-drop
   h2:
     console:
       enabled: true

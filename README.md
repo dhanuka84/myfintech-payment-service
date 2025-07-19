@@ -21,6 +21,16 @@ api-docs.yaml
 $ mvn spring-boot:run
 $ mvn clean install
 
+# Maven Dependency Tree
+ 	mvn dependency:tree
+
+# Maven Dependency Enforcing
+	https://maven.apache.org/enforcer/enforcer-rules/index.html
+
+	mvn enforcer:enforce -Drules=requireReleaseDeps
+	mvn enforcer:enforce -Drules=banDuplicatePomDependencyVersions
+
+
 #JCoCo test coverage report
 target/site/jacoco/index.html
 
@@ -32,10 +42,10 @@ https://projectlombok.org/setup/eclipse
 
 #Check Style
 # Check for violations
-mvn checkstyle:check
+	mvn checkstyle:check
 
 # Generate HTML report
-mvn checkstyle:checkstyle
+	mvn checkstyle:checkstyle
 
 #Pagination
 # Default pagination

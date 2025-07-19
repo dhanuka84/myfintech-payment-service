@@ -86,6 +86,7 @@ public final class ExceptionHandlerConstants {
     public static final String VALIDATION_CONSTRAINTS_VIOLATED = "One or more validation constraints were violated";
     public static final String REQUEST_VALIDATION_FAILED = "Request validation failed. Please check the errors and try again.";
     public static final String CLIENT_NOT_FOUND = "client not found: ";
+    public static final String CONTRACT_NOT_FOUND = "contract not found: ";
     
     /**
      * Data integrity messages

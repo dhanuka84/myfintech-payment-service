@@ -17,6 +17,7 @@ import org.myfintech.payment.validator.CotractValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import static org.myfintech.payment.exception.handler.ExceptionHandlerConstants.CONTRACT_NOT_FOUND;
 
 @Service
 public class ContractServiceImpl implements ContractService {
@@ -54,7 +55,7 @@ public class ContractServiceImpl implements ContractService {
 	@Override
 	@Transactional
 	public ContractDTO update(Long id, ContractDTO dto) {
-		Contract contract = repository.findById(id).orElseThrow(() -> new Http404NotFoundException("Contract not found: " + id));
+		Contract contract = repository.findById(id).orElseThrow(() -> new Http404NotFoundException(CONTRACT_NOT_FOUND + id));
 		contract.setContractNumber(dto.contractNumber());
 		return mapper.toDTO(contract);
 	}
@@ -63,7 +64,7 @@ public class ContractServiceImpl implements ContractService {
 	@Transactional(readOnly = true)
 	public Optional<Contract> findByContractNumber(String contractNumber) {
 		return Optional.of(repository.findByContractNumber(contractNumber)
-				.orElseThrow(() -> new Http404NotFoundException("Contract not found: " + contractNumber)));
+				.orElseThrow(() -> new Http404NotFoundException(CONTRACT_NOT_FOUND + contractNumber)));
 	}
 
 	@Override

@@ -37,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Override
 	public Page<PaymentDTO> findAll(Pageable pageable) {
-	    return paymentRepository.findAll(pageable).map(mapper::toDTO); 
+		return paymentRepository.findAllWithContract(pageable).map(mapper::toDTO); 
 	}
 
 

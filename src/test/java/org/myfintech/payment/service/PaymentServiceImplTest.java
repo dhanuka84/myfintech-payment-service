@@ -87,7 +87,7 @@ class PaymentServiceImplTest {
 	@Test
 	void shouldReturnAllPayments() {
 		Pageable pageable = PageRequest.of(0, 10);
-		when(paymentRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(payment)));
+		when(paymentRepository.findAllWithContract(pageable)).thenReturn(new PageImpl<>(List.of(payment)));
 
 		Page<PaymentDTO> result = paymentFacade.findAll(pageable);
 
