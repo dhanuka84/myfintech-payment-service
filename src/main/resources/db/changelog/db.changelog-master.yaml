@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-tables
+      author: dhanuka
+      changes:
+        - sqlFile:
+            path: changes/001-create-tables.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: 002-insert-test-data
+      author: dhanuka
+      context: test
+      changes:
+        - sqlFile:
+            path: changes/002-insert-test-data.sql
+            relativeToChangelogFile: true

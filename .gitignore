@@ -1,0 +1,45 @@
+# =====================================================================================
+# Java and Maven
+# =====================================================================================
+# Compiled class files and build output
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Log files
+*.log
+logs/
+
+# Java archives
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Java Virtual Machine crash logs
+hs_err_pid*
+replay_pid*
+
+
+# =====================================================================================
+# Operating System files
+# =====================================================================================
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+
+

@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: myfintechdb
+      POSTGRES_USER: myfintech
+      POSTGRES_PASSWORD: myfintechpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/myfintechdb
+      SPRING_DATASOURCE_USERNAME: myfintech
+      SPRING_DATASOURCE_PASSWORD: myfintechpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_LIQUIBASE_ENABLED: true
+    ports:
+      - "8080:8080"
+    command: ["java", "-jar", "/app.jar"]
+
+volumes:
+  pgdata:

@@ -1,0 +1,67 @@
+#application.yaml
+spring:
+  profiles:
+    active: test
+# Pagination defaults
+  jpa:
+    open-in-view: false  # Disable for better performance
+  data:
+        web:
+          pageable:
+            default-page-size: 10
+            max-page-size: 100
+            one-indexed-parameters: true  # If you want page starting from 1
+
+info:
+  app:
+    name: MyFintech Payment Service
+    version: 0.0.1
+    description: Service for handling payment operations.
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG                # Logs SQL statements
+    org.hibernate.type.descriptor.sql: TRACE # Logs SQL bind parameter values
+    org.hibernate.transaction: DEBUG         # Logs transaction lifecycle (begin, commit, rollback)
+    org.springframework.orm.jpa: DEBUG       # Spring's JPA integration logging
+
+
+use:
+  virtual:
+    threads: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+# Enable if annotation alone doesn't work (Springdoc 2+)
+  pageable-as-query-param: true
+
+
+myfintech:
+  jaxb:
+    pool:
+      max-total: 20        # Maximum number of objects in pool
+      max-idle: 10         # Maximum idle objects in pool
+      min-idle: 2          # Minimum idle objects to maintain
+      max-wait-millis: 5000 # Max wait time for borrowing object
+      test-on-borrow: true  # Validate object when borrowing
+      test-on-return: true  # Validate object when returning
+
+    

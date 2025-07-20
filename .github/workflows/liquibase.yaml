@@ -1,0 +1,59 @@
+name: Liquibase Migration CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  liquibase-migrate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: myfintechdb
+          POSTGRES_USER: myfintech
+          POSTGRES_PASSWORD: myfintechpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Wait for Postgres to be ready
+        run: |
+          for i in {1..20}; do
+            pg_isready -h localhost -p 5432 -U myfintech && exit 0
+            echo "Waiting for Postgres..."
+            sleep 3
+          done
+          echo "Postgres did not become available in time" >&2
+          exit 1
+
+      - name: Test DB connection with psql
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          PGPASSWORD=myfintechpass psql -h localhost -U myfintech -d myfintechdb -c '\dt'
+
+      - name: Run Liquibase Migrations
+        uses: liquibase-github-actions/update@v4.33.0
+        with:
+          operation: 'update'
+          changeLogFile: 'src/main/resources/db/changelog/db.changelog-master.yaml'
+          url: 'jdbc:postgresql://postgres:5432/myfintechdb'
+          username: 'myfintech'
+          password: 'myfintechpass'
+
+      - name: Print Postgres logs on failure
+        if: failure()
+        run: |
+          docker ps -a
+          docker logs $(docker ps -q --filter ancestor=postgres:15)
+
