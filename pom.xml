@@ -277,34 +277,7 @@
 				</executions>
 			</plugin>
 
-			<!--<plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.43.0</version>
-                <configuration>
-                    <java>
-                         Updated googleJavaFormat version 
-                        <googleJavaFormat>
-                            <version>1.19.2</version>
-                            <style>AOSP</style>
-                        </googleJavaFormat>
-                        <removeUnusedImports/>
-                        <importOrder>
-                             Order changed to put jakarta after java 
-                            <order>java,jakarta,org,com</order>
-                        </importOrder>
-                    </java>
-                </configuration>
-                <executions>
-                    <execution>
-                         Changed goal from 'check' to 'apply' 
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
-            </plugin>-->
+			
 
 
 		</plugins>

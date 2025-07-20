@@ -19,9 +19,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
-/*@Getter
-@Setter
-@NoArgsConstructor*/
 @XmlRootElement(name = "payment")
 @XmlAccessorType(XmlAccessType.FIELD)
 public record PaymentDTO(

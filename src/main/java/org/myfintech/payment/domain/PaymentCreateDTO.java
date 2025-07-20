@@ -17,9 +17,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.xml.bind.annotation.XmlElement;
 
-/*@Getter
-@Setter
-@NoArgsConstructor*/
 public record PaymentCreateDTO(
 		@XmlElement(name = "payment_date") @NotBlank(message = PAYMENT_DATE_REQUIRED) @Pattern(regexp = DATE_YYYY_MM_DD_PATTERN, message = PAYMENT_DATE_FORMAT) String paymentDate,
 		@XmlElement @Positive(message = AMOUNT_POSITIVE) double amount,
