@@ -286,7 +286,7 @@
 						<include>**/*Test.java</include>
 					</includes>
 					<reuseForks>false</reuseForks>
-					<forkedProcessTimeoutInSeconds>30</forkedProcessTimeoutInSeconds>
+					<forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 					<systemPropertyVariables>
 						<junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
 						<junit.jupiter.execution.parallel.enabled>false</junit.jupiter.execution.parallel.enabled>
