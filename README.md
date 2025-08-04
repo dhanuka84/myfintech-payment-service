@@ -18,7 +18,16 @@ http://localhost:8080/api-docs.yaml
 api-docs.yaml
 
 #Spring Boot Operations
-	$ mvn spring-boot:run
+	#to bootup with security
+	$ mvn spring-boot:run -Dspring-boot.run.profiles=local
+	
+	#to boot up without security
+	mvn spring-boot:run -Dspring-boot.run.profiles=non-security
+	
+	#to test
+	$ mvn clean test -Dspring.profiles.active=test
+	
+
 	$ mvn clean install
 
 # Maven Dependency Tree
