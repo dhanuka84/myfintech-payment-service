@@ -14,10 +14,6 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @author : Dhanuka Ranasinghe
- * @since : Date: 05/07/2025
- */
 @Component
 @Slf4j
 public class ClientValidator {

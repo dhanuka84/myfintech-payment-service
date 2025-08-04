@@ -27,7 +27,7 @@ public class CsvPaymentFileParser implements PaymentFileParser {
     }
 
     @Override
-    public List<PaymentDTO> parse(InputStream inputStream) throws Exception {
+    public List<PaymentDTO> parse(InputStream inputStream) throws FileParsingException {
         List<PaymentDTO> payments = new ArrayList<>(INITIAL_CAPACITY);
 
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));

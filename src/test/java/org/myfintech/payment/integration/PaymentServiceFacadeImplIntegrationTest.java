@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.myfintech.payment.PaymentApplication;
+import org.myfintech.payment.config.TestSecurityConfig;
 import org.myfintech.payment.domain.ClientCreateDTO;
 import org.myfintech.payment.domain.ClientDTO;
 import org.myfintech.payment.domain.ContractCreateDTO;
@@ -39,7 +40,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest(classes = PaymentApplication.class)
+@SpringBootTest(classes = { PaymentApplication.class, TestSecurityConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PaymentServiceFacadeImplIntegrationTest  extends AbstractIntegrationTest{
 
@@ -59,13 +60,6 @@ public class PaymentServiceFacadeImplIntegrationTest  extends AbstractIntegratio
     private ClientRepository clientRepository;
     @Autowired
     private ContractRepository contractRepository;
-	/*
-	 * @Autowired private PaymentMapper paymentMapper;
-	 * 
-	 * @Autowired private ClientMapper clientMapper;
-	 * 
-	 * @Autowired private ContractMapper contractMapper;
-	 */
 
     @BeforeEach
     @Transactional
