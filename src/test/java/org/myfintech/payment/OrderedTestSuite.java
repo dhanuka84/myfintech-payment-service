@@ -7,6 +7,7 @@ import org.myfintech.payment.api.v1.ContractControllerTest;
 import org.myfintech.payment.api.v1.PaymentControllerTest;
 import org.myfintech.payment.integration.ClientControllerIntegrationTest;
 import org.myfintech.payment.integration.PaymentServiceFacadeImplIntegrationTest;
+import org.myfintech.payment.integration.testcontainers.ClientControllerRestAssuredTest;
 import org.myfintech.payment.integration.testcontainers.ClientServiceIntegrationTest;
 import org.myfintech.payment.integration.testcontainers.PaymentServiceFacadeIntegrationTest;
 import org.myfintech.payment.service.ClientServiceImplTest;
@@ -24,7 +25,8 @@ import org.myfintech.payment.service.PaymentServiceImplTest;
 	ClientControllerIntegrationTest.class,
 	PaymentServiceFacadeImplIntegrationTest.class,
 	ClientServiceIntegrationTest.class,
-	PaymentServiceFacadeIntegrationTest.class
+	PaymentServiceFacadeIntegrationTest.class,
+	ClientControllerRestAssuredTest.class
 })
 public class OrderedTestSuite {
 
