@@ -18,7 +18,7 @@ jobs:
           java-version: "21"
           distribution: temurin
       - name: Build and Test with Maven
-        run: mvn -B clean verify
+        run: mvn -B clean verify -Ptest
       - name: Upload JaCoCo Report
         uses: actions/upload-artifact@v4
         with:
