@@ -7,7 +7,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.5.3</version>
-		<relativePath /> 
+		<relativePath />
 	</parent>
 	<groupId>org.myfintech</groupId>
 	<artifactId>myfintech-payment</artifactId>
@@ -27,12 +27,22 @@
 		<lombok.version>1.18.38</lombok.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<junit.jupiter.version>5.10.2</junit.jupiter.version>
+		<junit.platform.version>1.10.2</junit.platform.version>
 		<maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
 		<maven.surefire.plugin.version>3.5.3</maven.surefire.plugin.version>
 		<jacoco.plugin.version>0.8.11</jacoco.plugin.version>
 		<lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
 		<postgresql.driver.version>42.7.7</postgresql.driver.version>
-		<!-- Added	PostgreSQL driver version -->
+		<h2.version>2.2.224</h2.version>
+		<hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
+		<jaxb.api.version>4.0.2</jaxb.api.version>
+		<jaxb.impl.version>4.0.3</jaxb.impl.version>
+		<commons.pool2.version>2.12.0</commons.pool2.version>
+		<spring.security.version>6.2.3</spring.security.version>
+		<testcontainers.version>1.21.3</testcontainers.version>
+		<testcontainers.keycloak.version>3.8.0</testcontainers.keycloak.version>
+		<restassured.version>5.5.5</restassured.version>
+		<hamcrest.version>3.0</hamcrest.version>
 	</properties>
 
 	<dependencyManagement>
@@ -131,15 +141,8 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-suite</artifactId>
-			<version>1.10.2</version>
+			<version>${junit.platform.version}</version>
 			<scope>test</scope>
-		</dependency>
-
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<!--<scope>test</scope>-->
 		</dependency>
 
 		<dependency>
@@ -174,7 +177,7 @@
 			<artifactId>jaxb-impl</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<!-- security-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -189,7 +192,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>1.21.3</version>
+			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -198,17 +201,17 @@
 			<version>1.19.7</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers</artifactId>
-			<version>1.21.3</version>
+			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.github.dasniko</groupId>
 			<artifactId>testcontainers-keycloak</artifactId>
-			<version>3.8.0</version>
+			<version>${testcontainers.keycloak.version}</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -220,19 +223,59 @@
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>5.5.5</version>
+			<version>${restassured.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
-			<version>3.0</version>
+			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>
 
 
 	</dependencies>
+
+	<profiles>
+		<!-- H2 for Test Scope -->
+		<profile>
+			<id>test</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>test</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<version>${h2.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- H2 for Local Dev Runtime -->
+		<profile>
+			<id>local</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>local</value>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>com.h2database</groupId>
+					<artifactId>h2</artifactId>
+					<version>${h2.version}</version>
+					<scope>runtime</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 
 
 	<build>

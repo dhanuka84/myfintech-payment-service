@@ -19,16 +19,16 @@ api-docs.yaml
 
 #Spring Boot Operations
 	#to bootup with security
-	$ mvn spring-boot:run -Dspring-boot.run.profiles=local
+	$ mvn spring-boot:run -Denv=local -Dspring-boot.run.profiles=local
 	
 	#to boot up without security
-	mvn spring-boot:run -Dspring-boot.run.profiles=non-security
+	$ mvn spring-boot:run -Denv=local -Dspring-boot.run.profiles=non-security
 	
 	#to test
-	$ mvn clean test -Dspring.profiles.active=test
+	$ mvn clean test -Ptest
 	
 
-	$ mvn clean install
+	$ mvn clean install -Ptest
 
 # Maven Dependency Tree
  	mvn dependency:tree
