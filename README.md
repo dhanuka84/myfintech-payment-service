@@ -27,7 +27,6 @@ api-docs.yaml
 	
 	#to test
 	$ mvn clean test -Ptest
-	
 
 	$ mvn clean install -Ptest
 

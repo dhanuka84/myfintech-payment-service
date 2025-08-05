@@ -43,6 +43,7 @@
 		<testcontainers.keycloak.version>3.8.0</testcontainers.keycloak.version>
 		<restassured.version>5.5.5</restassured.version>
 		<hamcrest.version>3.0</hamcrest.version>
+
 	</properties>
 
 	<dependencyManagement>
@@ -198,7 +199,7 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>1.19.7</version>
+			<version>${test.containers.version}</version>
 			<scope>test</scope>
 		</dependency>
 
