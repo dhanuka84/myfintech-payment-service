@@ -18,8 +18,9 @@ http://localhost:8080/api-docs.yaml
 api-docs.yaml
 
 #Spring Boot Operations
-	$ mvn spring-boot:run
-	$ mvn clean install
+	$ mvn spring-boot:run -Denv=local -Dspring-boot.run.profiles=local
+
+	$ mvn clean install -Ptest
 
 # Maven Dependency Tree
  	mvn dependency:tree
