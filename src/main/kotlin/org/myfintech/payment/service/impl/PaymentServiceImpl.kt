@@ -1,10 +1,10 @@
 package org.myfintech.payment.service.impl
 
 import org.myfintech.payment.domain.PaymentDTO
+import org.myfintech.payment.domain.toDTO
 import org.myfintech.payment.entity.Payment
 import org.myfintech.payment.entity.PaymentTracking
 import org.myfintech.payment.exception.Http404NotFoundException
-import org.myfintech.payment.mapper.PaymentMapper
 import org.myfintech.payment.repository.PaymentRepository
 import org.myfintech.payment.repository.PaymentTrackingRepository
 import org.myfintech.payment.service.PaymentService
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional
 class PaymentServiceImpl(
     private val paymentRepository: PaymentRepository,
     private val trackingRepository: PaymentTrackingRepository,
-    private val mapper: PaymentMapper,
     private val validator: PaymentValidator
 ) : PaymentService {
 
@@ -30,7 +29,7 @@ class PaymentServiceImpl(
     }
 
     override fun findAll(pageable: Pageable): Page<PaymentDTO> {
-        return paymentRepository.findAllWithContract(pageable).map(mapper::toDTO)
+        return paymentRepository.findAllWithContract(pageable).map { it.toDTO() }
     }
 
     @Transactional(readOnly = true)
@@ -41,7 +40,7 @@ class PaymentServiceImpl(
 
     @Transactional(readOnly = true)
     override fun findPaymentsByContractNumber(contractNumber: String): List<PaymentDTO> {
-        return  paymentRepository.findPaymentsByContract_ContractNumber(contractNumber).map(mapper::toDTO)
+        return paymentRepository.findPaymentsByContract_ContractNumber(contractNumber).map { it.toDTO() }
     }
 
     @Transactional
@@ -57,12 +56,9 @@ class PaymentServiceImpl(
     @Transactional
     override fun saveTrackedPayments(trackingNumber: String, paymentEntities: List<Payment>) {
         val paymentTracking = trackingRepository.save(PaymentTracking(trackingNumber))
-
         paymentEntities.forEach { it.trackingId = paymentTracking.id!! }
-
         paymentRepository.saveAll(paymentEntities)
-
-        log.info("Successfully saved tracking record {} and {} of payments", trackingNumber, paymentEntities.size)
+        log.info("Successfully saved tracking record {} and {} payments", trackingNumber, paymentEntities.size)
     }
 
     @Transactional

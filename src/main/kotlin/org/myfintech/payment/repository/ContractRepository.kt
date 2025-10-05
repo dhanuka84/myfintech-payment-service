@@ -11,7 +11,7 @@ interface ContractRepository : BaseRepository<Contract, Long> {
      * Finds a contract by its unique contract number.
      * Returns a nullable Contract, which is more idiomatic in Kotlin than Optional.
      */
-    fun findByContractNumber(contractNumber: String): Contract?
+    fun findByContractNumber(contractNumber: String): Contract
 
     /**
      * Finds all contracts whose numbers are in the given set.

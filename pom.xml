@@ -22,7 +22,7 @@
         <java.version>21</java.version>
         <kotlin.version>2.1.21</kotlin.version>
         <spring.boot.version>3.5.3</spring.boot.version>
-        <start-class>org.myfintech.payment.PaymentApplication</start-class>
+        <start-class>org.myfintech.payment.PaymentApplicationKt</start-class>
         <!-- dependency versions -->
         <log4j.version>2.17.1</log4j.version>
         <javax.persistence.version>2.2</javax.persistence.version>
@@ -161,11 +161,11 @@
 <!--        </dependency>-->
 
         <!-- MapStruct API -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!-- Kotlin -->
         <dependency>
@@ -294,6 +294,8 @@
     </profiles>
 
     <build>
+        <!--<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
+        <!--<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
         <plugins>
             <!-- Kotlin 2.1 + kapt + Spring/JPA support -->
             <plugin>
@@ -313,6 +315,7 @@
                         <artifactId>kotlin-maven-noarg</artifactId>
                         <version>${kotlin.version}</version>
                     </dependency>
+
                 </dependencies>
 
                 <executions>
@@ -322,26 +325,7 @@
                         <goals>
                             <goal>kapt</goal>
                         </goals>
-                        <configuration>
-                            <annotationProcessorPaths>
-                                <annotationProcessorPath>
-                                    <groupId>org.mapstruct</groupId>
-                                    <artifactId>mapstruct-processor</artifactId>
-                                    <version>${mapstruct.version}</version>
-                                </annotationProcessorPath>
-                                <!-- Keep Lombok only if you still have Java sources needing it -->
-                                <annotationProcessorPath>
-                                    <groupId>org.projectlombok</groupId>
-                                    <artifactId>lombok</artifactId>
-                                    <version>${lombok.version}</version>
-                                </annotationProcessorPath>
-                                <annotationProcessorPath>
-                                    <groupId>org.projectlombok</groupId>
-                                    <artifactId>lombok-mapstruct-binding</artifactId>
-                                    <version>${lombok.mapstruct.binding.version}</version>
-                                </annotationProcessorPath>
-                            </annotationProcessorPaths>
-                        </configuration>
+
                     </execution>
 
                     <execution>
@@ -390,14 +374,14 @@
             </plugin>
 
             <!-- Java compiler (only if you still have .java files; safe to keep) -->
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <release>${java.version}</release>
                 </configuration>
-            </plugin>
+            </plugin>-->
 
             <!-- Unit tests -->
             <plugin>
@@ -406,13 +390,17 @@
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
                     <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                        <include>**/*Spec.java</include>
-                        <include>**/*Test.kt</include>
+
                         <include>**/*Tests.kt</include>
-                        <include>**/*Spec.kt</include>
+
                     </includes>
+                    <reuseForks>false</reuseForks>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                    <systemPropertyVariables>
+                        <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                        <junit.jupiter.execution.parallel.enabled>false</junit.jupiter.execution.parallel.enabled>
+                        <org.testcontainers.reuse.enable>true</org.testcontainers.reuse.enable>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 

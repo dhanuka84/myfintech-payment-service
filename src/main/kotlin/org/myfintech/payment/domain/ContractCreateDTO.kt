@@ -16,7 +16,6 @@ import org.myfintech.payment.validator.CommonValidations.ValidContractNumber
  * @author : Dhanuka Ranasinghe
  * @since : Date: 05/07/2025
  */
-@JvmRecord
 data class ContractCreateDTO(
     val clientId: @NotNull(message = "clientId is required") Long,
     @field:ValidContractNumber @param:ValidContractNumber val contractNumber: String

@@ -20,17 +20,16 @@ import org.myfintech.payment.validator.PaymentValidationConstants
 
 @XmlRootElement(name = "payment")
 @XmlAccessorType(XmlAccessType.FIELD)
-@JvmRecord
 data class PaymentDTO(
-    @JvmField @field:XmlElement(name = "payment_date") @param:XmlElement(
+     @field:XmlElement(name = "payment_date") @param:XmlElement(
         name = "payment_date"
     ) val paymentDate: @NotBlank(message = PaymentValidationConstants.PAYMENT_DATE_REQUIRED) @Pattern(
         regexp = PaymentValidationConstants.DATE_YYYY_MM_DD_PATTERN,
         message = PaymentValidationConstants.PAYMENT_DATE_FORMAT
     ) String,
-    @JvmField @field:XmlElement @param:XmlElement val amount: @Positive(message = PaymentValidationConstants.AMOUNT_POSITIVE) Double,
-    @JvmField @field:XmlElement @param:XmlElement val type: @NotBlank(message = PaymentValidationConstants.TYPE_REQUIRED) String,
-    @JvmField @field:XmlElement(name = "contract_number") @param:XmlElement(
+     @field:XmlElement @param:XmlElement val amount: @Positive(message = PaymentValidationConstants.AMOUNT_POSITIVE) Double,
+     @field:XmlElement @param:XmlElement val type: @NotBlank(message = PaymentValidationConstants.TYPE_REQUIRED) String,
+     @field:XmlElement(name = "contract_number") @param:XmlElement(
         name = "contract_number"
     ) val contractNumber: @NotBlank(message = PaymentValidationConstants.CONTRACT_NUMBER_REQUIRED) String
 

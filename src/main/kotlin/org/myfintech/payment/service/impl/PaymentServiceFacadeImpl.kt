@@ -1,12 +1,8 @@
 package org.myfintech.payment.service.impl
 
-import org.myfintech.payment.domain.PaymentCreateDTO
-import org.myfintech.payment.domain.PaymentDTO
-import org.myfintech.payment.entity.Client
+import org.myfintech.payment.domain.*
 import org.myfintech.payment.entity.Contract
 import org.myfintech.payment.entity.Payment
-import org.myfintech.payment.entity.projection.ContractWithClientProjection
-import org.myfintech.payment.mapper.PaymentMapper
 import org.myfintech.payment.service.ContractService
 import org.myfintech.payment.service.PaymentService
 import org.myfintech.payment.service.PaymentServiceFacade
@@ -16,44 +12,30 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Service
 class PaymentServiceFacadeImpl(
     private val paymentService: PaymentService,
-    private val contractService: ContractService,
-    private val mapper: PaymentMapper
+    private val contractService: ContractService
 ) : PaymentServiceFacade {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(PaymentServiceFacadeImpl::class.java)
-        private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
 
     @Async
+    @Transactional
     override fun saveAsynch(trackingNumber: String, validPayments: List<PaymentDTO>) {
         val contractNumbers = validPayments.map { it.contractNumber }.toSet()
 
         val contractsByNumber = contractService.findAllByContractNumbers(contractNumbers)
-            .map(::mapToContractEntity)
+            .map(::mapProjectionToContractEntity)
             .associateBy { it.contractNumber }
 
         val paymentEntities = filterOutValidEntities(validPayments, contractsByNumber)
 
         paymentService.saveTrackedPayments(trackingNumber, paymentEntities)
-    }
-
-    private fun mapToContractEntity(projection: ContractWithClientProjection): Contract {
-        val client = Client(id = projection.clientId, clientName = projection.clientName)
-        return Contract(
-            id = projection.id,
-            contractNumber = projection.contractNumber,
-            client = client
-        )
     }
 
     private fun filterOutValidEntities(
@@ -66,7 +48,7 @@ class PaymentServiceFacadeImpl(
                     log.error("Contract not found for number: {}", dto.contractNumber)
                     throw IllegalArgumentException("Contract not found: ${dto.contractNumber}")
                 }
-            mapper.toEntity(dto, contract)
+            dto.toEntity(contract)
         }
     }
 
@@ -75,16 +57,16 @@ class PaymentServiceFacadeImpl(
     }
 
     override fun findById(id: Long): PaymentDTO {
-        return mapper.toDTO(paymentService.findById(id))
+        return paymentService.findById(id).toDTO()
     }
 
     @Transactional
     override fun save(dto: PaymentCreateDTO): PaymentDTO {
         val contract = contractService.findByContractNumber(dto.contractNumber)
             ?: throw IllegalArgumentException("Contract not found: ${dto.contractNumber}")
-        val entity = mapper.toEntity(dto, contract)
+        val entity = dto.toEntity(contract)
         val savedPayment = paymentService.savePayment(entity, dto.trackingNumber)
-        return mapper.toDTO(savedPayment)
+        return savedPayment.toDTO()
     }
 
     @Transactional
@@ -92,24 +74,22 @@ class PaymentServiceFacadeImpl(
         paymentService.validate(dto)
         val payment = paymentService.findById(id)
 
-        // Validate that the contract exists
+        // Validate that the contract exists, but don't re-assign it
         contractService.findByContractNumber(dto.contractNumber)
             ?: throw IllegalArgumentException("Contract not found: ${dto.contractNumber}")
 
-        // Apply updates directly to the managed entity
-        payment.paymentDate = LocalDate.parse(dto.paymentDate, DATE_FORMATTER)
-        payment.amount = BigDecimal.valueOf(dto.amount)
-        payment.type = dto.type
+        // Apply updates to the managed entity
+        payment.updateFrom(dto)
 
-        val savedPayment = paymentService.savePayment(payment)
-        return mapper.toDTO(savedPayment)
+        // The transaction will commit the changes, no need to call save
+        return payment.toDTO()
     }
 
     override fun findPaymentsByContractNumber(contractNumber: String): List<PaymentDTO> {
         return paymentService.findPaymentsByContractNumber(contractNumber)
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(readOnly = true)
     override fun validatePaymentsOrFail(payments: List<PaymentDTO>) {
         payments.forEach(paymentService::validate)
     }
