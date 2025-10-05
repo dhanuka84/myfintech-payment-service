@@ -28,7 +28,7 @@ api-docs.yaml
 	#to test
 	$ mvn clean test -Ptest
 	
-
+	#to build and test
 	$ mvn clean install -Ptest
 
 # Maven Dependency Tree
