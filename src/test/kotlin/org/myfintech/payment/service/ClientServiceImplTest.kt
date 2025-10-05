@@ -1,75 +1,64 @@
 package org.myfintech.payment.service
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mapstruct.factory.Mappers
-import org.mockito.*
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.whenever
 import org.myfintech.payment.domain.ClientCreateDTO
-import org.myfintech.payment.domain.ClientDTO
+import org.myfintech.payment.domain.toDTO
+import org.myfintech.payment.domain.toEntity
 import org.myfintech.payment.entity.Client
-import org.myfintech.payment.mapper.ClientMapper
 import org.myfintech.payment.repository.ClientRepository
 import org.myfintech.payment.service.impl.ClientServiceImpl
 import org.myfintech.payment.validator.ClientValidator
-import java.time.OffsetDateTime
-import java.util.*
-import java.util.List
+import org.springframework.data.repository.findByIdOrNull
+import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)
 class ClientServiceImplTest {
-    @Mock
-    private val clientRepository: ClientRepository? = null
 
     @Mock
-    private val restValidator: ClientValidator? = null
+    private lateinit var clientRepository: ClientRepository
 
-    @Spy
-    private val clientMapper: ClientMapper? = Mappers.getMapper<ClientMapper?>(ClientMapper::class.java)
+    @Mock
+    private lateinit var validator: ClientValidator
 
     @InjectMocks
-    private val clientService: ClientServiceImpl? = null
+    private lateinit var clientService: ClientServiceImpl
 
-    private var client: Client? = null
-    private var clientDTO: ClientDTO? = null
-    private var clientCreateDTO: ClientCreateDTO? = null
+    @Test
+    fun `should return all clients`() {
+        val client = Client("Acme").apply { id = 1L }
+        whenever(clientRepository.findAll()).thenReturn(listOf(client))
 
-    @BeforeEach
-    fun setUp() {
-        val now = OffsetDateTime.now()
-        client = Client(1L, now, now, "Acme")
-        clientDTO = ClientDTO(1L, "Acme")
-        clientCreateDTO = ClientCreateDTO("Acme")
+        val result = clientService.findAll()
+
+        assertEquals(1, result.size)
+        assertEquals("Acme", result[0].clientName)
     }
 
     @Test
-    fun shouldReturnAllClients() {
-        Mockito.`when`<MutableList<Client?>?>(clientRepository!!.findAll()).thenReturn(List.of<Client?>(client))
-        val result = clientService!!.findAll()
-        Assertions.assertEquals(1, result.size)
-        assertEquals("Acme", result.get(0).clientName())
+    fun `should save and return client`() {
+        val createDto = ClientCreateDTO("New Corp")
+        val entity = createDto.toEntity()
+        whenever(clientRepository.save(entity)).thenReturn(entity.apply { id = 1L })
+
+        val result = clientService.save(createDto)
+
+        assertEquals("New Corp", result.clientName)
     }
 
     @Test
-    fun shouldReturnClientById() {
-        Mockito.`when`<Optional<Client?>?>(clientRepository!!.findById(1L)).thenReturn(Optional.of<Client?>(client!!))
-        val result = clientService!!.findById(1L)
-        assertEquals("Acme", result.clientName())
-    }
+    fun `should update existing client`() {
+        val existingClient = Client("Old Name").apply { id = 1L }
+        val dto = existingClient.toDTO().copy(clientName = "New Name")
+        whenever(clientRepository.findByIdOrNull(1L)).thenReturn(existingClient)
 
-    @Test
-    fun shouldSaveClient() {
-        Mockito.`when`<Any?>(clientRepository!!.save<Client?>(ArgumentMatchers.any<Client?>())).thenReturn(client)
-        val result = clientService!!.save(clientCreateDTO)
-        assertEquals("Acme", result.clientName())
-    }
+        val result = clientService.update(1L, dto)
 
-    @Test
-    fun shouldUpdateClient() {
-        Mockito.`when`<Optional<Client?>?>(clientRepository!!.findById(1L)).thenReturn(Optional.of<Client?>(client!!))
-        val result = clientService!!.update(1L, clientDTO!!)
-        assertEquals("Acme", result.clientName())
+        assertEquals("New Name", result.clientName)
+        assertEquals(1L, result.clientId)
     }
 }

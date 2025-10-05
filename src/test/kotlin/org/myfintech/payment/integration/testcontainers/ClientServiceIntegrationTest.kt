@@ -1,6 +1,5 @@
 package org.myfintech.payment.integration.testcontainers
 
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.myfintech.payment.PaymentApplication
 import org.myfintech.payment.domain.ClientCreateDTO
@@ -12,39 +11,40 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.function.Supplier
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 @SpringBootTest(classes = [PaymentApplication::class])
 @Testcontainers
 class ClientServiceIntegrationTest : AbstractTestcontainersIntegrationTest() {
+
     @Autowired
-    var clientService: ClientService? = null
+    private lateinit var clientService: ClientService
 
     @Test
-    fun saveClient_createsClientSuccessfully() {
+    fun `saveClient creates client successfully`() {
         val dto = ClientCreateDTO("Testcontainers User")
-        val saved = clientService!!.save(dto)
+        val saved = clientService.save(dto)
 
-        Assertions.assertNotNull(saved)
-        Assertions.assertNotNull(saved.clientId())
-        assertEquals("Testcontainers User", saved.clientName())
+        assertNotNull(saved)
+        assertNotNull(saved.clientId)
+        assertEquals("Testcontainers User", saved.clientName)
     }
 
     companion object {
         @Container
-        var postgres: PostgreSQLContainer<*> = PostgreSQLContainer<SELF?>("postgres:16.3")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test")
+        val postgres = PostgreSQLContainer<Nothing>("postgres:16.3").apply {
+            withDatabaseName("testdb")
+            withUsername("test")
+            withPassword("test")
+        }
 
+        @JvmStatic
         @DynamicPropertySource
         fun configureProperties(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.url", Supplier { postgres.getJdbcUrl() })
-            registry.add("spring.datasource.username", Supplier { postgres.getUsername() })
-            registry.add("spring.datasource.password", Supplier { postgres.getPassword() })
-            registry.add("spring.datasource.driver-class-name", Supplier { postgres.getDriverClassName() })
-            // If using Liquibase
-            // registry.add("spring.liquibase.enabled", () -> true);
+            registry.add("spring.datasource.url", postgres::getJdbcUrl)
+            registry.add("spring.datasource.username", postgres::getUsername)
+            registry.add("spring.datasource.password", postgres::getPassword)
         }
     }
 }
