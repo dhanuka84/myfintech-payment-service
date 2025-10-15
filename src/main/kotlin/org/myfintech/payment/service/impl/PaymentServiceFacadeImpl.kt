@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Service
@@ -25,7 +26,6 @@ class PaymentServiceFacadeImpl(
     }
 
     @Async
-    @Transactional
     override fun saveAsynch(trackingNumber: String, validPayments: List<PaymentDTO>) {
         val contractNumbers = validPayments.map { it.contractNumber }.toSet()
 
@@ -60,7 +60,6 @@ class PaymentServiceFacadeImpl(
         return paymentService.findById(id).toDTO()
     }
 
-    @Transactional
     override fun save(dto: PaymentCreateDTO): PaymentDTO {
         val contract = contractService.findByContractNumber(dto.contractNumber)
             ?: throw IllegalArgumentException("Contract not found: ${dto.contractNumber}")
@@ -69,7 +68,6 @@ class PaymentServiceFacadeImpl(
         return savedPayment.toDTO()
     }
 
-    @Transactional
     override fun update(id: Long, dto: PaymentDTO): PaymentDTO {
         paymentService.validate(dto)
         val payment = paymentService.findById(id)
@@ -89,7 +87,7 @@ class PaymentServiceFacadeImpl(
         return paymentService.findPaymentsByContractNumber(contractNumber)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(propagation = Propagation.SUPPORTS)
     override fun validatePaymentsOrFail(payments: List<PaymentDTO>) {
         payments.forEach(paymentService::validate)
     }
